@@ -1,4 +1,6 @@
-﻿namespace chess.delikirpi.com.Models
+﻿using System;
+
+namespace chess.delikirpi.com.Models
 {
     public class Response
     {
@@ -13,5 +15,9 @@
         public string BestMove { get; set; }
 
         public string Ponder { get; set; }
+
+        public int ThinkDurationInSeconds { get; set; }
+
+        public DateTime DateTime { get; set; }
     }
 }

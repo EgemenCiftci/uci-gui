@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http;
-using System.Web.Mvc;
 
 namespace chess.delikirpi.com.Controllers
 {
@@ -13,12 +12,19 @@ namespace chess.delikirpi.com.Controllers
         Process process;
 
         // GET api/values/5
-        public Response Get(string fen, bool isChess960 = false)
+        public Response Get(string fen, bool isChess960 = false, int thinkDurationInSeconds = 10)
         {
+            var response = new Response { Fen = fen, IsChess960 = isChess960, ThinkDurationInSeconds = thinkDurationInSeconds, DateTime = DateTime.Now };
+
             try
             {
                 if (!IsFenValid(fen))
-                    return new Response { Code = -1, Description = "FEN is not valid.", Fen = fen, IsChess960 = isChess960 };
+                {
+                    response.Code = -1;
+                    response.Description = "FEN is not valid.";
+
+                    return response;
+                }
 
                 fen = fen.Trim();
 
@@ -42,7 +48,7 @@ namespace chess.delikirpi.com.Controllers
                 process.StandardInput.WriteLine("position fen {0}", fen);
                 process.StandardInput.WriteLine("go infinite");
 
-                System.Threading.Thread.Sleep(10000);
+                System.Threading.Thread.Sleep(thinkDurationInSeconds * 1000);
 
                 process.StandardInput.WriteLine("stop");
 
@@ -57,7 +63,10 @@ namespace chess.delikirpi.com.Controllers
 
                         process.StandardInput.WriteLine("quit");
 
-                        return new Response { Fen = fen, IsChess960 = isChess960, BestMove = bestMove, Ponder = ponder };
+                        response.BestMove = bestMove;
+                        response.Ponder = ponder;
+
+                        return response;
                     }
                 }
             }
@@ -66,7 +75,10 @@ namespace chess.delikirpi.com.Controllers
                 if (process != null && process.StandardInput != null)
                     process.StandardInput.WriteLine("quit");
 
-                return new Response { Code = -1, Description = ex.Message, Fen = fen, IsChess960 = isChess960 };
+                response.Code = -1;
+                response.Description = ex.Message;
+
+                return response;
             }
         }
 

@@ -1,13 +1,13 @@
-﻿using UciGui.Properties;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using UciGui.Properties;
 using Xceed.Wpf.Toolkit;
-using System.Text.RegularExpressions;
 
 namespace UciGui
 {
@@ -18,8 +18,8 @@ namespace UciGui
     {
         public string Fen
         {
-            get { return (string)GetValue(FenProperty); }
-            set { SetValue(FenProperty, value); }
+            get => (string)GetValue(FenProperty);
+            set => SetValue(FenProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Fen.  This enables animation, styling, binding, etc...
@@ -29,8 +29,8 @@ namespace UciGui
 
         public UIElement[] Options
         {
-            get { return (UIElement[])GetValue(OptionsProperty); }
-            set { SetValue(OptionsProperty, value); }
+            get => (UIElement[])GetValue(OptionsProperty);
+            set => SetValue(OptionsProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Options.  This enables animation, styling, binding, etc...
@@ -40,8 +40,8 @@ namespace UciGui
 
         public string BestMove
         {
-            get { return (string)GetValue(BestMoveProperty); }
-            set { SetValue(BestMoveProperty, value); }
+            get => (string)GetValue(BestMoveProperty);
+            set => SetValue(BestMoveProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for BestMove.  This enables animation, styling, binding, etc...
@@ -51,8 +51,8 @@ namespace UciGui
 
         public string Ponder
         {
-            get { return (string)GetValue(PonderProperty); }
-            set { SetValue(PonderProperty, value); }
+            get => (string)GetValue(PonderProperty);
+            set => SetValue(PonderProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Ponder.  This enables animation, styling, binding, etc...
@@ -62,16 +62,14 @@ namespace UciGui
 
         public bool IsBusy
         {
-            get { return (bool)GetValue(IsBusyProperty); }
-            set { SetValue(IsBusyProperty, value); }
+            get => (bool)GetValue(IsBusyProperty);
+            set => SetValue(IsBusyProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for IsBusy.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsBusyProperty =
             DependencyProperty.Register("IsBusy", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-
-        Process process;
+        private Process process;
 
 
         public MainWindow()
@@ -84,22 +82,26 @@ namespace UciGui
             try
             {
                 // Create process start information
-                var processStartInfo = new ProcessStartInfo(Settings.Default.UciEngineExe);
-                processStartInfo.UseShellExecute = false;
-                processStartInfo.ErrorDialog = false;
-                processStartInfo.RedirectStandardError = true;
-                processStartInfo.RedirectStandardInput = true;
-                processStartInfo.RedirectStandardOutput = true;
-                processStartInfo.CreateNoWindow = true;
+                ProcessStartInfo processStartInfo = new ProcessStartInfo(Settings.Default.UciEngineExe)
+                {
+                    UseShellExecute = false,
+                    ErrorDialog = false,
+                    RedirectStandardError = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
 
                 // Start process
-                process = new Process();
-                process.StartInfo = processStartInfo;
+                process = new Process
+                {
+                    StartInfo = processStartInfo
+                };
                 bool processStarted = process.Start();
 
                 if (processStarted)
                 {
-                    var optionLines = GetOptionLines(process);
+                    List<string> optionLines = GetOptionLines(process);
 
                     UpdateGuiOptions(optionLines);
                 }
@@ -112,7 +114,7 @@ namespace UciGui
 
         private void UpdateGuiOptions(List<string> optionLines)
         {
-            var options = optionLines.Select(f => new Option
+            IEnumerable<Option> options = optionLines.Select(f => new Option
             {
                 Name = GetWord(f, "name", "type"),
                 Type = GetWord(f, "type", "default"),
@@ -122,16 +124,16 @@ namespace UciGui
                 Items = GetItems(f, "var"),
             });
 
-            var o = new List<UIElement>();
+            List<UIElement> o = new List<UIElement>();
 
-            foreach (var option in options)
+            foreach (Option option in options)
             {
                 switch (option.Type)
                 {
                     case "spin":
-                        var dp = new DockPanel { Margin = new Thickness(2) };
+                        DockPanel dp = new DockPanel { Margin = new Thickness(2) };
                         dp.Children.Add(new TextBlock { Text = option.Name + ": " });
-                        var sld = new Slider { Value = Convert.ToInt32(option.Default), Minimum = option.Minimum, Maximum = option.Maximum, SmallChange = 1, IsSnapToTickEnabled = true, AutoToolTipPlacement = AutoToolTipPlacement.TopLeft };
+                        Slider sld = new Slider { Value = Convert.ToInt32(option.Default), Minimum = option.Minimum, Maximum = option.Maximum, SmallChange = 1, IsSnapToTickEnabled = true, AutoToolTipPlacement = AutoToolTipPlacement.TopLeft };
                         sld.ValueChanged += (s, e) =>
                         {
                             SetOption(option, sld.Value.ToString());
@@ -141,7 +143,7 @@ namespace UciGui
                         o.Add(dp);
                         break;
                     case "check":
-                        var cb = new CheckBox { Content = option.Name, IsChecked = Convert.ToBoolean(option.Default), Margin = new Thickness(2) };
+                        CheckBox cb = new CheckBox { Content = option.Name, IsChecked = Convert.ToBoolean(option.Default), Margin = new Thickness(2) };
                         cb.Checked += (s, e) =>
                         {
                             SetOption(option, "true");
@@ -153,7 +155,7 @@ namespace UciGui
                         o.Add(cb);
                         break;
                     case "string":
-                        var wtb = new WatermarkTextBox { Watermark = option.Name, Text = option.Default, Margin = new Thickness(2) };
+                        WatermarkTextBox wtb = new WatermarkTextBox { Watermark = option.Name, Text = option.Default, Margin = new Thickness(2) };
                         wtb.TextChanged += (s, e) =>
                         {
                             SetOption(option, wtb.Text);
@@ -161,7 +163,7 @@ namespace UciGui
                         o.Add(wtb);
                         break;
                     case "button":
-                        var btn = new Button { Content = option.Name, Margin = new Thickness(2) };
+                        Button btn = new Button { Content = option.Name, Margin = new Thickness(2) };
                         btn.Click += (s, e) =>
                         {
                             SetOption(option, null);
@@ -169,7 +171,7 @@ namespace UciGui
                         o.Add(btn);
                         break;
                     case "combo":
-                        var cbx = new ComboBox { ItemsSource = option.Items, Margin = new Thickness(2) };
+                        ComboBox cbx = new ComboBox { ItemsSource = option.Items, Margin = new Thickness(2) };
                         cbx.SelectionChanged += (s, e) =>
                         {
                             SetOption(option, (string)cbx.SelectedItem);
@@ -184,12 +186,12 @@ namespace UciGui
 
         private string[] GetItems(string optionLine, string previousWord)
         {
-            var items = new List<string>();
+            List<string> items = new List<string>();
 
             while (optionLine.Contains(" var "))
             {
                 items.Add(GetWord(optionLine, "var", "var"));
-                var secondIndex = optionLine.IndexOf("var ", 0, 2);
+                int secondIndex = optionLine.IndexOf("var ", 0, 2);
 
                 if (secondIndex != -1)
                 {
@@ -204,11 +206,11 @@ namespace UciGui
         {
             process.StandardInput.WriteLine("uci");
 
-            var options = new List<string>();
+            List<string> options = new List<string>();
 
             while (true)
             {
-                var line = process.StandardOutput.ReadLine();
+                string line = process.StandardOutput.ReadLine();
 
                 if (line != null)
                 {
@@ -238,7 +240,7 @@ namespace UciGui
 
         private string GetWord(string optionLine, string previousWord, string nextWord)
         {
-            var previousWordIndex = optionLine.IndexOf(previousWord);
+            int previousWordIndex = optionLine.IndexOf(previousWord);
 
             if (previousWordIndex < 0)
             {
@@ -246,7 +248,7 @@ namespace UciGui
             }
             else
             {
-                var startIndex = previousWordIndex + previousWord.Length + 1;
+                int startIndex = previousWordIndex + previousWord.Length + 1;
 
                 if (nextWord == null)
                 {
@@ -254,7 +256,7 @@ namespace UciGui
                 }
                 else
                 {
-                    var nextWordIndex = optionLine.IndexOf(nextWord);
+                    int nextWordIndex = optionLine.IndexOf(nextWord);
 
                     if (nextWordIndex < 0)
                     {
@@ -262,7 +264,7 @@ namespace UciGui
                     }
                     else
                     {
-                        var length = nextWordIndex - 1 - startIndex;
+                        int length = nextWordIndex - 1 - startIndex;
 
                         return optionLine.Substring(startIndex, length);
                     }
@@ -312,7 +314,7 @@ namespace UciGui
 
                 while (true)
                 {
-                    var line = process.StandardOutput.ReadLine();
+                    string line = process.StandardOutput.ReadLine();
 
                     if (line != null && line.StartsWith("bestmove"))
                     {
@@ -331,15 +333,17 @@ namespace UciGui
         private void ParseFen(string fen)
         {
             if (!IsFenValid(fen))
+            {
                 return;
-
-
+            }
         }
 
         private bool IsFenValid(string fen)
         {
             if (string.IsNullOrWhiteSpace(fen))
+            {
                 return false;
+            }
 
             return Regex.IsMatch(fen, @"([rnbqkpRNBQKP1-8]+\/){7}([rnbqkpRNBQKP1-8]+)\s[bw-]\s(([a-hkqA-HKQ]{1,4})|(-))\s(([a-h][36])|(-))\s(0|[1-9][0-9]*)\s([1-9][0-9]*)");
         }

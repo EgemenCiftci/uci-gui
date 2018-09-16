@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="UciEngineExe" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">stockfish 7 x64 bmi2.exe</Value>
+      <Value Profile="(Default)">stockfish_9_x64_bmi2.exe</Value>
     </Setting>
   </Settings>
 </SettingsFile>
