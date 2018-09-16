@@ -25,7 +25,7 @@ namespace UciGui.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("stockfish_9_x64_bmi2.exe")]
+        [global::System.Configuration.DefaultSettingValueAttribute("stockfish_9_x64.exe")]
         public string UciEngineExe {
             get {
                 return ((string)(this["UciEngineExe"]));
