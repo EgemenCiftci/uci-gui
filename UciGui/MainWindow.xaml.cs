@@ -135,7 +135,7 @@ namespace UciGui
                 {
                     case OptionTypes.Spin:
                         DockPanel dp = new DockPanel { Margin = new Thickness(2) };
-                        dp.Children.Add(new TextBlock { Text = option.Name + ": " });
+                        dp.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
                         Slider sld = new Slider { Value = Convert.ToInt32(option.Default), Minimum = option.Minimum, Maximum = option.Maximum, SmallChange = 1, IsSnapToTickEnabled = true, AutoToolTipPlacement = AutoToolTipPlacement.TopLeft };
                         sld.ValueChanged += (s, e) =>
                         {
@@ -158,12 +158,20 @@ namespace UciGui
                         o.Add(cb);
                         break;
                     case OptionTypes.String:
-                        WatermarkTextBox wtb = new WatermarkTextBox { Watermark = option.Name, Text = option.Default, Margin = new Thickness(2) };
+                        DockPanel dp1 = new DockPanel { Margin = new Thickness(2) };
+                        dp1.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
+                        TextBox wtb = new TextBox
+                        {
+                            Text = option.Default,
+                            Margin = new Thickness(2)
+                        };
                         wtb.TextChanged += (s, e) =>
                         {
                             SetOption(option, wtb.Text);
                         };
-                        o.Add(wtb);
+                        DockPanel.SetDock(wtb, Dock.Right);
+                        dp1.Children.Add(wtb);
+                        o.Add(dp1);
                         break;
                     case OptionTypes.Button:
                         Button btn = new Button { Content = option.Name, Margin = new Thickness(2) };
@@ -174,12 +182,16 @@ namespace UciGui
                         o.Add(btn);
                         break;
                     case OptionTypes.Combo:
+                        DockPanel dp0 = new DockPanel { Margin = new Thickness(2) };
+                        dp0.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
                         ComboBox cbx = new ComboBox { ItemsSource = option.Items, SelectedItem = option.Default, Margin = new Thickness(2) };
                         cbx.SelectionChanged += (s, e) =>
                         {
                             SetOption(option, (string)cbx.SelectedItem);
                         };
-                        o.Add(cbx);
+                        DockPanel.SetDock(cbx, Dock.Right);
+                        dp0.Children.Add(cbx);
+                        o.Add(dp0);
                         break;
                 }
             }
