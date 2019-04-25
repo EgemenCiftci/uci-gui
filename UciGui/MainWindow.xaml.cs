@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using UciGui.Enums;
 using UciGui.Properties;
 using Xceed.Wpf.Toolkit;
 
@@ -16,6 +17,8 @@ namespace UciGui
     /// </summary>
     public partial class MainWindow
     {
+        private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var" };
+
         public string Fen
         {
             get => (string)GetValue(FenProperty);
@@ -114,15 +117,15 @@ namespace UciGui
 
         private void UpdateGuiOptions(List<string> optionLines)
         {
-            IEnumerable<Option> options = optionLines.Select(f => new Option
+            List<Option> options = optionLines.Select(f => GetDict("option", f)).Select(f => new Option
             {
-                Name = GetWord(f, "name", "type"),
-                Type = GetWord(f, "type", "default"),
-                Default = GetWord(f, "default", "min"),
-                Minimum = Convert.ToInt32(GetWord(f, "min", "max")),
-                Maximum = Convert.ToInt32(GetWord(f, "max", null)),
-                Items = GetItems(f, "var"),
-            });
+                Name = f.ContainsKey("name") ? f["name"] : null,
+                Type = f.ContainsKey("type") ? f["type"] : OptionTypes.None,
+                Default = f.ContainsKey("default") ? f["default"] : null,
+                Minimum = f.ContainsKey("min") ? f["min"] : 0,
+                Maximum = f.ContainsKey("max") ? f["max"] : 0,
+                Items = f.ContainsKey("var") ? f["var"].ToArray() : null,
+            }).ToList();
 
             List<UIElement> o = new List<UIElement>();
 
@@ -130,7 +133,7 @@ namespace UciGui
             {
                 switch (option.Type)
                 {
-                    case "spin":
+                    case OptionTypes.Spin:
                         DockPanel dp = new DockPanel { Margin = new Thickness(2) };
                         dp.Children.Add(new TextBlock { Text = option.Name + ": " });
                         Slider sld = new Slider { Value = Convert.ToInt32(option.Default), Minimum = option.Minimum, Maximum = option.Maximum, SmallChange = 1, IsSnapToTickEnabled = true, AutoToolTipPlacement = AutoToolTipPlacement.TopLeft };
@@ -142,7 +145,7 @@ namespace UciGui
                         dp.Children.Add(sld);
                         o.Add(dp);
                         break;
-                    case "check":
+                    case OptionTypes.Check:
                         CheckBox cb = new CheckBox { Content = option.Name, IsChecked = Convert.ToBoolean(option.Default), Margin = new Thickness(2) };
                         cb.Checked += (s, e) =>
                         {
@@ -154,7 +157,7 @@ namespace UciGui
                         };
                         o.Add(cb);
                         break;
-                    case "string":
+                    case OptionTypes.String:
                         WatermarkTextBox wtb = new WatermarkTextBox { Watermark = option.Name, Text = option.Default, Margin = new Thickness(2) };
                         wtb.TextChanged += (s, e) =>
                         {
@@ -162,7 +165,7 @@ namespace UciGui
                         };
                         o.Add(wtb);
                         break;
-                    case "button":
+                    case OptionTypes.Button:
                         Button btn = new Button { Content = option.Name, Margin = new Thickness(2) };
                         btn.Click += (s, e) =>
                         {
@@ -170,8 +173,8 @@ namespace UciGui
                         };
                         o.Add(btn);
                         break;
-                    case "combo":
-                        ComboBox cbx = new ComboBox { ItemsSource = option.Items, Margin = new Thickness(2) };
+                    case OptionTypes.Combo:
+                        ComboBox cbx = new ComboBox { ItemsSource = option.Items, SelectedItem = option.Default, Margin = new Thickness(2) };
                         cbx.SelectionChanged += (s, e) =>
                         {
                             SetOption(option, (string)cbx.SelectedItem);
@@ -182,24 +185,6 @@ namespace UciGui
             }
 
             Options = o.ToArray();
-        }
-
-        private string[] GetItems(string optionLine, string previousWord)
-        {
-            List<string> items = new List<string>();
-
-            while (optionLine.Contains(" var "))
-            {
-                items.Add(GetWord(optionLine, "var", "var"));
-                int secondIndex = optionLine.IndexOf("var ", 0, 2);
-
-                if (secondIndex != -1)
-                {
-                    optionLine = optionLine.Substring(secondIndex);
-                }
-            }
-
-            return items.ToArray();
         }
 
         private List<string> GetOptionLines(Process process)
@@ -238,37 +223,71 @@ namespace UciGui
             }
         }
 
-        private string GetWord(string optionLine, string previousWord, string nextWord)
+        private Dictionary<string, dynamic> GetDict(string type, string line)
         {
-            int previousWordIndex = optionLine.IndexOf(previousWord);
+            var dict = new Dictionary<string, dynamic>();
 
-            if (previousWordIndex < 0)
+            if (type != null)
             {
-                return null;
+                line = line.Substring(line.IndexOf(type) + type.Length + 1);
             }
-            else
-            {
-                int startIndex = previousWordIndex + previousWord.Length + 1;
 
-                if (nextWord == null)
+            string[] words = line.Split(' ').Select(f => f.Trim()).ToArray();
+
+            string key = null;
+            List<string> values = new List<string>();
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (keywords.Any(f => f == words[i]))
                 {
-                    return optionLine.Substring(startIndex);
+                    if (!string.IsNullOrWhiteSpace(key) && values.Count > 0)
+                    {
+                        AddToDict(dict, key, values);
+                    }
+
+                    key = words[i];
+                    values.Clear();
                 }
                 else
                 {
-                    int nextWordIndex = optionLine.IndexOf(nextWord);
-
-                    if (nextWordIndex < 0)
-                    {
-                        return optionLine.Substring(startIndex);
-                    }
-                    else
-                    {
-                        int length = nextWordIndex - 1 - startIndex;
-
-                        return optionLine.Substring(startIndex, length);
-                    }
+                    values.Add(words[i]);
                 }
+            }
+
+            if (!string.IsNullOrWhiteSpace(key) && values.Count > 0)
+            {
+                AddToDict(dict, key, values);
+            }
+
+            return dict;
+        }
+
+        private static void AddToDict(Dictionary<string, dynamic> dict, string key, List<string> values)
+        {
+            var value = string.Join(" ", values);
+
+            if (key == "min" || key == "max")
+            {
+                dict.Add(key, Convert.ToInt32(value));
+            }
+            else if (key == "type")
+            {
+                dict.Add(key, Enum.Parse(typeof(OptionTypes), char.ToUpper(value[0]) + value.Substring(1)));
+            }
+            else if (key == "var")
+            {
+                if (dict.ContainsKey("var"))
+                {
+                    dict["var"].Add(value);
+                }
+                else
+                {
+                    dict.Add(key, new List<string>(new string[] { value }));
+                }
+            }
+            else
+            {
+                dict.Add(key, value);
             }
         }
 
@@ -318,8 +337,10 @@ namespace UciGui
 
                     if (line != null && line.StartsWith("bestmove"))
                     {
-                        BestMove = GetWord(line, "bestmove", "ponder");
-                        Ponder = GetWord(line, "ponder", null);
+                        var dict = GetDict(null, line);
+
+                        BestMove = dict.ContainsKey("bestmove") ? dict["bestmove"] : null;
+                        Ponder = dict.ContainsKey("ponder") ? dict["ponder"] : null;
                         break;
                     }
                 }
