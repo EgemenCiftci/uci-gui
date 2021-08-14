@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using UciGui.Enums;
 using UciGui.Properties;
-using Xceed.Wpf.Toolkit;
 
 namespace UciGui
 {
@@ -111,7 +110,7 @@ namespace UciGui
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
+                _ = MessageBox.Show(ex.Message);
             }
         }
 
@@ -135,14 +134,14 @@ namespace UciGui
                 {
                     case OptionTypes.Spin:
                         DockPanel dp = new DockPanel { Margin = new Thickness(2) };
-                        dp.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
+                        _ = dp.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
                         Slider sld = new Slider { Value = Convert.ToInt32(option.Default), Minimum = option.Minimum, Maximum = option.Maximum, SmallChange = 1, IsSnapToTickEnabled = true, AutoToolTipPlacement = AutoToolTipPlacement.TopLeft };
                         sld.ValueChanged += (s, e) =>
                         {
                             SetOption(option, sld.Value.ToString());
                         };
                         DockPanel.SetDock(sld, Dock.Right);
-                        dp.Children.Add(sld);
+                        _ = dp.Children.Add(sld);
                         o.Add(dp);
                         break;
                     case OptionTypes.Check:
@@ -159,7 +158,7 @@ namespace UciGui
                         break;
                     case OptionTypes.String:
                         DockPanel dp1 = new DockPanel { Margin = new Thickness(2) };
-                        dp1.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
+                        _ = dp1.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
                         TextBox wtb = new TextBox
                         {
                             Text = option.Default,
@@ -170,7 +169,7 @@ namespace UciGui
                             SetOption(option, wtb.Text);
                         };
                         DockPanel.SetDock(wtb, Dock.Right);
-                        dp1.Children.Add(wtb);
+                        _ = dp1.Children.Add(wtb);
                         o.Add(dp1);
                         break;
                     case OptionTypes.Button:
@@ -183,15 +182,18 @@ namespace UciGui
                         break;
                     case OptionTypes.Combo:
                         DockPanel dp0 = new DockPanel { Margin = new Thickness(2) };
-                        dp0.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
+                        _ = dp0.Children.Add(new TextBlock { Text = option.Name + ": ", VerticalAlignment = VerticalAlignment.Center });
                         ComboBox cbx = new ComboBox { ItemsSource = option.Items, SelectedItem = option.Default, Margin = new Thickness(2) };
                         cbx.SelectionChanged += (s, e) =>
                         {
                             SetOption(option, (string)cbx.SelectedItem);
                         };
                         DockPanel.SetDock(cbx, Dock.Right);
-                        dp0.Children.Add(cbx);
+                        _ = dp0.Children.Add(cbx);
                         o.Add(dp0);
+                        break;
+                    case OptionTypes.None:
+                    default:
                         break;
                 }
             }
@@ -237,7 +239,7 @@ namespace UciGui
 
         private Dictionary<string, dynamic> GetDict(string type, string line)
         {
-            var dict = new Dictionary<string, dynamic>();
+            Dictionary<string, dynamic> dict = new Dictionary<string, dynamic>();
 
             if (type != null)
             {
@@ -276,7 +278,7 @@ namespace UciGui
 
         private static void AddToDict(Dictionary<string, dynamic> dict, string key, List<string> values)
         {
-            var value = string.Join(" ", values);
+            string value = string.Join(" ", values);
 
             if (key == "min" || key == "max")
             {
@@ -315,7 +317,7 @@ namespace UciGui
 
                 process.StandardInput.WriteLine("ucinewgame");
 
-                Fen = Fen.Trim();
+                Fen = Fen?.Trim();
 
                 if (string.IsNullOrWhiteSpace(Fen))
                 {
@@ -330,7 +332,8 @@ namespace UciGui
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
+                IsBusy = false;
+                _ = MessageBox.Show(ex.Message);
             }
         }
 
@@ -349,7 +352,7 @@ namespace UciGui
 
                     if (line != null && line.StartsWith("bestmove"))
                     {
-                        var dict = GetDict(null, line);
+                        Dictionary<string, dynamic> dict = GetDict(null, line);
 
                         BestMove = dict.ContainsKey("bestmove") ? dict["bestmove"] : null;
                         Ponder = dict.ContainsKey("ponder") ? dict["ponder"] : null;
@@ -373,12 +376,8 @@ namespace UciGui
 
         private bool IsFenValid(string fen)
         {
-            if (string.IsNullOrWhiteSpace(fen))
-            {
-                return false;
-            }
-
-            return Regex.IsMatch(fen, @"([rnbqkpRNBQKP1-8]+\/){7}([rnbqkpRNBQKP1-8]+)\s[bw-]\s(([a-hkqA-HKQ]{1,4})|(-))\s(([a-h][36])|(-))\s(0|[1-9][0-9]*)\s([1-9][0-9]*)");
+            return !string.IsNullOrWhiteSpace(fen)
+                && Regex.IsMatch(fen, @"([rnbqkpRNBQKP1-8]+\/){7}([rnbqkpRNBQKP1-8]+)\s[bw-]\s(([a-hkqA-HKQ]{1,4})|(-))\s(([a-h][36])|(-))\s(0|[1-9][0-9]*)\s([1-9][0-9]*)");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
