@@ -16,7 +16,7 @@ namespace UciGui
     /// </summary>
     public partial class MainWindow
     {
-        private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var" };
+        private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var", "bestmove", "ponder" };
 
         public string Fen
         {
@@ -362,7 +362,8 @@ namespace UciGui
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
+                IsBusy = false;
+                MessageBox.Show(ex.Message);
             }
         }
 
