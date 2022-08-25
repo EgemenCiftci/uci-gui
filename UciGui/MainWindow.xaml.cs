@@ -363,7 +363,7 @@ namespace UciGui
             catch (Exception ex)
             {
                 IsBusy = false;
-                MessageBox.Show(ex.Message);
+                _ = MessageBox.Show(ex.Message);
             }
         }
 

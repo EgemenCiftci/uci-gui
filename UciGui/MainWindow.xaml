@@ -78,7 +78,7 @@
             </GroupBox>
             <GroupBox Header="About" Grid.ColumnSpan="2" Grid.Row="3">
                 <StackPanel>
-                    <TextBlock Text="2021 - Egemen Çiftci"/>
+                    <TextBlock Text="2022 - Egemen Çiftci"/>
                 </StackPanel>
             </GroupBox>
         </Grid>
