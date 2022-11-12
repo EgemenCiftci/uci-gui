@@ -6,14 +6,12 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using UciGui.Enums;
 using UciGui.Properties;
 
 namespace UciGui
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
         private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var", "bestmove", "ponder" };
@@ -310,6 +308,7 @@ namespace UciGui
             try
             {
                 ((ToggleButton)sender).Content = "STOP";
+                ((ToggleButton)sender).Background = Brushes.Red;
                 IsBusy = true;
 
                 BestMove = null;
@@ -342,6 +341,7 @@ namespace UciGui
             try
             {
                 ((ToggleButton)sender).Content = "GO";
+                ((ToggleButton)sender).Background = Brushes.LightGreen;
                 IsBusy = false;
 
                 process.StandardInput.WriteLine("stop");
@@ -379,11 +379,6 @@ namespace UciGui
         {
             return !string.IsNullOrWhiteSpace(fen)
                 && Regex.IsMatch(fen, @"([rnbqkpRNBQKP1-8]+\/){7}([rnbqkpRNBQKP1-8]+)\s[bw-]\s(([a-hkqA-HKQ]{1,4})|(-))\s(([a-h][36])|(-))\s(0|[1-9][0-9]*)\s([1-9][0-9]*)");
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(IsFenValid(Fen));
         }
     }
 }

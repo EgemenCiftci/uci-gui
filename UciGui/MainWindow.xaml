@@ -4,83 +4,52 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:s="clr-namespace:System;assembly=mscorlib"
         xmlns:properties="clr-namespace:UciGui.Properties"
         x:Class="UciGui.MainWindow"
         mc:Ignorable="d"
-        Title="UCI GUI" Height="620" Width="800" DataContext="{Binding Mode=OneWay, RelativeSource={RelativeSource Self}}" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" BorderThickness="0" GlowBrush="Black" ResizeMode="CanResizeWithGrip" WindowTransitionsEnabled="False" Icon="uci-gui-logo.ico">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Expander Header="Options" IsExpanded="True">
-                <ItemsControl ItemsSource="{Binding Options}"/>
-            </Expander>
-            <Expander Grid.Column="1" Header="Input" IsExpanded="True">
+        Title="UCI GUI" 
+        Height="400" 
+        Width="800" 
+        DataContext="{Binding Mode=OneWay, RelativeSource={RelativeSource Self}}" 
+        Loaded="Window_Loaded" 
+        WindowStartupLocation="CenterScreen" 
+        BorderThickness="0" 
+        GlowBrush="Black" 
+        ResizeMode="CanResizeWithGrip"
+        WindowTransitionsEnabled="False" 
+        Icon="uci-gui-logo.ico">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel>
+            <GroupBox Header="Input" DockPanel.Dock="Top">
                 <StackPanel>
-                    <GroupBox Header="FEN From Board Diagram Image">
-                        <StackPanel>
-                            <Button Content="Browse Board Diagram Image..." Margin="2" Click="Button_Click"/>
-                            <xctk:WatermarkComboBox Watermark="Active Turn" Margin="2">
-                                <s:String>White</s:String>
-                                <s:String>Black</s:String>
-                            </xctk:WatermarkComboBox>
-                            <Grid Margin="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="White Castling Options: "/>
-                                <CheckBox Grid.Column="1" Content="King Side"/>
-                                <CheckBox Grid.Column="2" Content="Queen Side"/>
-                                <TextBlock Grid.Row="1" Text="Black Castling Options: "/>
-                                <CheckBox Grid.Column="1" Grid.Row="1" Content="King Side"/>
-                                <CheckBox Grid.Column="2" Grid.Row="1" Content="Queen Side"/>
-                            </Grid>
-                            <xctk:WatermarkTextBox Watermark="En Passant Target Square" Margin="2"/>
-                            <xctk:WatermarkTextBox Watermark="Halfmove Clock" Margin="2"/>
-                            <xctk:WatermarkTextBox Watermark="Fullmove Number" Margin="2"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="FEN">
-                        <xctk:WatermarkTextBox Watermark="FEN" Text="{Binding Fen}" Margin="2"/>
-                    </GroupBox>
-                </StackPanel>
-            </Expander>
-            <Grid Grid.ColumnSpan="2" Background="White" Opacity="0.5" Visibility="{Binding IsBusy, Converter={StaticResource btvc}}" d:IsHidden="True"/>
-            <Controls:ProgressRing Grid.ColumnSpan="2" IsActive="{Binding IsBusy}" d:IsHidden="True"/>
-            <ToggleButton Grid.ColumnSpan="2" Grid.Row="1" Content="GO" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked" Margin="2"/>
-            <GroupBox Header="Result" Grid.ColumnSpan="2" Grid.Row="2">
-                <StackPanel>
-                    <TextBlock>
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="Best Move: {0}  Ponder: {1}  (Using {2})">
-                                <Binding Path="BestMove"/>
-                                <Binding Path="Ponder"/>
-                                <Binding Path="UciEngineExe" Source="{x:Static properties:Settings.Default}"/>
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
+                    <xctk:WatermarkTextBox Watermark="FEN" Text="{Binding Fen}" Margin="2"/>
+                    <ToggleButton Content="GO" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked" Background="LightGreen" Margin="2"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="About" Grid.ColumnSpan="2" Grid.Row="3">
+            <GroupBox Header="About" DockPanel.Dock="Bottom">
                 <StackPanel>
                     <TextBlock Text="2022 - Egemen Çiftci"/>
                 </StackPanel>
             </GroupBox>
-        </Grid>
-    </ScrollViewer>
+            <GroupBox Header="Result" DockPanel.Dock="Bottom">
+                <StackPanel>
+                    <TextBlock Text="{Binding BestMove, StringFormat=Best Move: {0}}"/>
+                    <TextBlock Text="{Binding Ponder, StringFormat=Ponder: {0}}"/>
+                    <TextBlock Text="{Binding UciEngineExe, Source={x:Static properties:Settings.Default}, StringFormat=(Using {0})}"/>
+                </StackPanel>
+            </GroupBox>
+        </DockPanel>
+        <GroupBox Header="Options" Grid.Column="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Options}"/>
+            </ScrollViewer>
+        </GroupBox>
+        <Grid Grid.Column="1" Background="White" Opacity="0.5" Visibility="{Binding IsBusy, Converter={StaticResource btvc}}" d:IsHidden="True"/>
+        <Controls:ProgressRing Grid.Column="1" IsActive="{Binding IsBusy}" d:IsHidden="True"/>
+    </Grid>
 </Controls:MetroWindow>
