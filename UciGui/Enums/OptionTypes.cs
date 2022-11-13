@@ -1,17 +1,16 @@
-﻿namespace UciGui.Enums
+﻿namespace UciGui.Enums;
+
+public enum OptionTypes
 {
-    public enum OptionTypes
-    {
-        None,
+    None,
 
-        Spin,
+    Spin,
 
-        Check,
+    Check,
 
-        String,
+    String,
 
-        Button,
+    Button,
 
-        Combo,
-    }
+    Combo,
 }
