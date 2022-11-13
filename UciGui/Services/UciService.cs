@@ -13,10 +13,13 @@ namespace UciGui.Services
         private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var", "bestmove", "ponder" };
         private readonly Process _process = new() { StartInfo = GetProcessStartInfo() };
         public List<Option>? Options;
+        public bool IsProcessStarted;
 
         public UciService()
         {
-            if (_process.Start())
+            IsProcessStarted = _process.Start();
+
+            if (IsProcessStarted)
             {
                 Options = GetOptions();
             }
@@ -38,11 +41,6 @@ namespace UciGui.Services
         private List<string> GetOptionLines()
         {
             List<string> options = new();
-
-            if (_process == null)
-            {
-                return options;
-            }
 
             _process.StandardInput.WriteLine("uci");
 
@@ -68,12 +66,18 @@ namespace UciGui.Services
         {
             return GetOptionLines().Select(f => GetDict("option", f)).Select(f => new Option
             {
-                Name = f.TryGetValue("name", out dynamic v0) ? v0 : null,
-                Type = f.TryGetValue("type", out dynamic v1) ? v1 : OptionTypes.None,
-                Default = f.TryGetValue("default", out dynamic v2) ? v2 : null,
-                Minimum = f.TryGetValue("min", out dynamic v3) ? v3 : 0,
-                Maximum = f.TryGetValue("max", out dynamic v4) ? v4 : 0,
-                Items = f.TryGetValue("var", out dynamic v5) ? v5.ToArray() : null,
+#pragma warning disable IDE0008
+                Name = f.TryGetValue("name", out var v0) ? v0 : null,
+#pragma warning disable IDE0008
+                Type = f.TryGetValue("type", out var v1) ? v1 : OptionTypes.None,
+#pragma warning disable IDE0008
+                Default = f.TryGetValue("default", out var v2) ? v2 : null,
+#pragma warning disable IDE0008
+                Minimum = f.TryGetValue("min", out var v3) ? v3 : 0,
+#pragma warning disable IDE0008
+                Maximum = f.TryGetValue("max", out var v4) ? v4 : 0,
+#pragma warning disable IDE0008
+                Items = f.TryGetValue("var", out var v5) ? v5.ToArray() : null,
             }).ToList();
         }
 
@@ -135,7 +139,8 @@ namespace UciGui.Services
             }
             else if (key == "var")
             {
-                if (dict.TryGetValue("var", out dynamic v0))
+#pragma warning disable IDE0008
+                if (dict.TryGetValue("var", out var v0))
                 {
                     v0.Add(value);
                 }
@@ -179,10 +184,10 @@ namespace UciGui.Services
                 if (line != null && line.StartsWith("bestmove"))
                 {
                     Dictionary<string, dynamic> dict = GetDict(null, line);
-
-                    string? bestMove = dict.TryGetValue("bestmove", out dynamic v0) ? v0 : null;
-                    string? ponder = dict.TryGetValue("ponder", out dynamic v1) ? v1 : null;
-
+#pragma warning disable IDE0008
+                    string? bestMove = dict.TryGetValue("bestmove", out var v0) ? v0 : null;
+#pragma warning disable IDE0008
+                    string? ponder = dict.TryGetValue("ponder", out var v1) ? v1 : null;
                     return (bestMove, ponder);
                 }
             }
