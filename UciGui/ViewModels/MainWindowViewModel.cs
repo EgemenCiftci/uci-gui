@@ -42,7 +42,8 @@ public class MainWindowViewModel : BindableBase
 
     public ObservableCollection<Option> Options { get; } = new ObservableCollection<Option>();
 
-    public DelegateCommand<bool?> GoStopCommand { get; }
+    public DelegateCommand GoCommand { get; }
+    public DelegateCommand StopCommand { get; }
     public DelegateCommand<RoutedPropertyChangedEventArgs<double>> ValueChangedCommand { get; }
     public DelegateCommand<CheckBox> CheckBoxChangedCommand { get; }
     public DelegateCommand<RoutedEventArgs> TextChangedCommand { get; }
@@ -55,7 +56,8 @@ public class MainWindowViewModel : BindableBase
     {
         _uciService = uciService;
 
-        GoStopCommand = new DelegateCommand<bool?>(GoStop);
+        GoCommand = new DelegateCommand(Go);
+        StopCommand = new DelegateCommand(Stop);
         ValueChangedCommand = new DelegateCommand<RoutedPropertyChangedEventArgs<double>>(ValueChanged);
         CheckBoxChangedCommand = new DelegateCommand<CheckBox>(CheckBoxChanged);
         TextChangedCommand = new DelegateCommand<RoutedEventArgs>(TextChanged);
@@ -63,24 +65,6 @@ public class MainWindowViewModel : BindableBase
         SelectionChangedCommand = new DelegateCommand<RoutedEventArgs>(SelectionChanged);
 
         _uciService.Options?.ForEach(Options.Add);
-    }
-
-
-    private void GoStop(bool? isChecked)
-    {
-        if (isChecked == null)
-        {
-            return;
-        }
-
-        if (isChecked.Value)
-        {
-            Go();
-        }
-        else
-        {
-            Stop();
-        }
     }
 
     private void ValueChanged(RoutedPropertyChangedEventArgs<double> e)
@@ -147,7 +131,7 @@ public class MainWindowViewModel : BindableBase
             IsBusy = false;
 
             _uciService.Stop();
-            (string bestMove, string ponder) = _uciService.GetBestMoveAndPonder();
+            (string? bestMove, string? ponder) = _uciService.GetBestMoveAndPonder();
 
             BestMove = bestMove;
             Ponder = ponder;

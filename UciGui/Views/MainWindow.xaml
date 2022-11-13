@@ -14,9 +14,8 @@
         Width="800"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <converters:BooleanToBrushConverter x:Key="btbc"/>
-        <converters:BooleanToStringConverter x:Key="btsc"/>
         <BooleanToVisibilityConverter x:Key="btvc"/>
+        <converters:BooleanToInverseVisibilityConverter x:Key="btivc"/>
         <ts:OptionsDataTemplateSelector x:Key="odts"/>
     </Window.Resources>
     <Grid>
@@ -28,7 +27,13 @@
             <GroupBox Header="Input" DockPanel.Dock="Top">
                 <StackPanel>
                     <TextBox Text="{Binding Fen}" Margin="2"/>
-                    <ToggleButton Content="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource btsc}}" Command="{Binding GoStopCommand}" CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Background="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource btbc}}" Margin="2"/>
+                    <Button Content="GO" Command="{Binding GoCommand}" Visibility="{Binding IsBusy, Converter={StaticResource btivc}}" Background="#FF06B025" Margin="2"/>
+                    <Button Command="{Binding StopCommand}" Visibility="{Binding IsBusy, Converter={StaticResource btvc}}" Margin="2" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Grid>
+                            <ProgressBar IsIndeterminate="True" Background="Red"/>
+                            <TextBlock Text="STOP" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </Button>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="About" DockPanel.Dock="Bottom">
