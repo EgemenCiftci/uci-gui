@@ -167,16 +167,7 @@ namespace UciGui.Services
 
         public void SetPosition(string? fen)
         {
-            fen = fen?.Trim();
-
-            if (string.IsNullOrWhiteSpace(fen))
-            {
-                _process.StandardInput.WriteLine("position startpos");
-            }
-            else
-            {
-                _process.StandardInput.WriteLine("position fen {0}", fen);
-            }
+            _process.StandardInput.WriteLine("position {0}", string.IsNullOrWhiteSpace(fen) ? "startpos" : $"fen {fen.Trim()}");
         }
 
         public void Go()
