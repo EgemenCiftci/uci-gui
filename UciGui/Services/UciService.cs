@@ -11,16 +11,13 @@ namespace UciGui.Services
     public class UciService
     {
         private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var", "bestmove", "ponder" };
-
         private readonly Process _process = new() { StartInfo = GetProcessStartInfo() };
-        private readonly List<string>? _optionLines;
         public List<Option>? Options;
 
         public UciService()
         {
             if (_process.Start())
             {
-                _optionLines = GetOptionLines();
                 Options = GetOptions();
             }
         }
@@ -67,29 +64,22 @@ namespace UciGui.Services
             }
         }
 
-        private List<Option>? GetOptions()
+        private List<Option> GetOptions()
         {
-            return _optionLines?.Select(f => GetDict("option", f)).Select(f => new Option
+            return GetOptionLines().Select(f => GetDict("option", f)).Select(f => new Option
             {
                 Name = f.TryGetValue("name", out dynamic v0) ? v0 : null,
                 Type = f.TryGetValue("type", out dynamic v1) ? v1 : OptionTypes.None,
                 Default = f.TryGetValue("default", out dynamic v2) ? v2 : null,
                 Minimum = f.TryGetValue("min", out dynamic v3) ? v3 : 0,
                 Maximum = f.TryGetValue("max", out dynamic v4) ? v4 : 0,
-                Items = f.ContainsKey("var") ? f["var"].ToArray() : null,
+                Items = f.TryGetValue("var", out dynamic v5) ? v5.ToArray() : null,
             }).ToList();
         }
 
         public void SetOption(Option option, string? newValue)
         {
-            if (newValue == null)
-            {
-                _process.StandardInput.WriteLine("setoption name {0}", option.Name);
-            }
-            else
-            {
-                _process.StandardInput.WriteLine("setoption name {0} value {1}", option.Name, newValue);
-            }
+            _process.StandardInput.WriteLine("setoption name {0}{1}", option.Name, newValue == null ? null : $" value {newValue}");
         }
 
         private Dictionary<string, dynamic> GetDict(string? type, string line)
@@ -145,9 +135,9 @@ namespace UciGui.Services
             }
             else if (key == "var")
             {
-                if (dict.TryGetValue("var", out dynamic val))
+                if (dict.TryGetValue("var", out dynamic v0))
                 {
-                    val.Add(value);
+                    v0.Add(value);
                 }
                 else
                 {
