@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="stockfish_15_x64_avx2.exe" />
+    <None Remove="stockfish-windows-x86-64-avx2.exe" />
     <None Remove="uci-gui-logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="stockfish_15_x64_avx2.exe">
+    <Content Include="stockfish-windows-x86-64-avx2.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -39,7 +39,7 @@
 
   <ItemGroup>
     <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

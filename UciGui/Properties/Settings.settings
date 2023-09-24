@@ -1,9 +1,9 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="UciGuiNew.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="UciGui.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="UciEngineExe" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">stockfish_15_x64_avx2.exe</Value>
+      <Value Profile="(Default)">stockfish-windows-x86-64-avx2.exe</Value>
     </Setting>
   </Settings>
 </SettingsFile>

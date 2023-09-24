@@ -4,13 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:properties="clr-namespace:UciGui.Properties"
         xmlns:converters="clr-namespace:UciGui.Converters"
+        xmlns:userControls="clr-namespace:UciGui.UserControls"
         xmlns:ts="clr-namespace:UciGui.TemplateSelectors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:prism="http://prismlibrary.com/"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:viewmodels="clr-namespace:UciGui.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="UCI GUI" 
-        Height="450" 
+        Height="600" 
         Width="800"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -36,17 +39,23 @@
                     </Button>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="About" DockPanel.Dock="Bottom">
-                <StackPanel>
-                    <TextBlock Text="2022 - Egemen Çiftci"/>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Result" DockPanel.Dock="Bottom">
+            <GroupBox Header="Result" DockPanel.Dock="Top">
                 <StackPanel>
                     <TextBlock Text="{Binding BestMove, StringFormat=Best Move:&#x09;{0}}"/>
                     <TextBlock Text="{Binding Ponder, StringFormat=Ponder:&#x09;&#x09;{0}}"/>
                     <TextBlock Text="{Binding UciEngineExe, Source={x:Static properties:Settings.Default}, StringFormat=(Using {0})}"/>
                 </StackPanel>
+            </GroupBox>
+            <GroupBox Header="About" DockPanel.Dock="Bottom">
+                <StackPanel>
+                    <TextBlock Text="2023 - Egemen Çiftci"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Visual" DockPanel.Dock="Top">
+                <Grid>
+                    <userControls:ChessBoard HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
+                    <userControls:ChessPiece ShapeType="Bishop" ColorType="Dark" Height="24" Width="24" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </Grid>
             </GroupBox>
         </DockPanel>
         <GroupBox Header="Options" Grid.Column="1">
