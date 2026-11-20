@@ -10,7 +10,7 @@ namespace UciGui.Services;
 
 public class UciService
 {
-    private readonly string[] keywords = new[] { "name", "type", "default", "min", "max", "var", "bestmove", "ponder" };
+    private readonly string[] keywords = ["name", "type", "default", "min", "max", "var", "bestmove", "ponder"];
     private readonly Process _process = new() { StartInfo = GetProcessStartInfo() };
     public List<Option>? Options;
     public bool IsProcessStarted;
@@ -40,7 +40,7 @@ public class UciService
 
     private List<string> GetOptionLines()
     {
-        List<string> options = new();
+        List<string> options = [];
 
         _process.StandardInput.WriteLine("uci");
 
@@ -82,7 +82,7 @@ public class UciService
 
     private Dictionary<string, dynamic> GetDict(string? type, string line)
     {
-        Dictionary<string, dynamic> dict = new();
+        Dictionary<string, dynamic> dict = [];
 
         if (type != null)
         {
@@ -92,7 +92,7 @@ public class UciService
         string[] words = line.Split(' ').Select(f => f.Trim()).ToArray();
 
         string? key = null;
-        List<string> values = new();
+        List<string> values = [];
         for (int i = 0; i < words.Length; i++)
         {
             if (keywords.Any(f => f == words[i]))

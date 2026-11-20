@@ -13,15 +13,15 @@ public class ColorTypeConverter : IMultiValueConverter
         bool isInverse = System.Convert.ToBoolean(parameter);
 
         if (values != null &&
-            values[0] is PieceColorTypes colorType &&
+            values[0] is ColorTypes colorType &&
             values[1] is Brush lightBrush &&
             values[2] is Brush darkBrush)
         {
             switch (colorType)
             {
-                case PieceColorTypes.Light:
+                case ColorTypes.Light:
                     return isInverse ? darkBrush : lightBrush;
-                case PieceColorTypes.Dark:
+                case ColorTypes.Dark:
                     return isInverse ? lightBrush : darkBrush;
             }
         }

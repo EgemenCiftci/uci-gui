@@ -1,6 +1,6 @@
 ﻿namespace UciGui.Enums;
 
-public enum PieceColorTypes
+public enum ColorTypes
 {
     Light,
 

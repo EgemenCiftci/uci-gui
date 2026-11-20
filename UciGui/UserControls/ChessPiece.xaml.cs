@@ -17,15 +17,15 @@ public partial class ChessPiece : UserControl
     public static readonly DependencyProperty ShapeTypeProperty =
         DependencyProperty.Register("ShapeType", typeof(PieceShapeTypes), typeof(ChessPiece), new PropertyMetadata(PieceShapeTypes.Pawn));
 
-    public PieceColorTypes ColorType
+    public ColorTypes ColorType
     {
-        get => (PieceColorTypes)GetValue(ColorTypeProperty);
+        get => (ColorTypes)GetValue(ColorTypeProperty);
         set => SetValue(ColorTypeProperty, value);
     }
 
     // Using a DependencyProperty as the backing store for ColorType.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty ColorTypeProperty =
-        DependencyProperty.Register("ColorType", typeof(PieceColorTypes), typeof(ChessPiece), new PropertyMetadata(PieceColorTypes.Light));
+        DependencyProperty.Register("ColorType", typeof(ColorTypes), typeof(ChessPiece), new PropertyMetadata(ColorTypes.Light));
 
     public Brush DarkBrush
     {

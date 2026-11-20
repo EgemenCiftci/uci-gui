@@ -12,35 +12,28 @@ namespace UciGui.ViewModels;
 
 public class MainWindowViewModel : BindableBase
 {
-    private string? _fen;
     public string? Fen
     {
-        get => _fen;
-        set => SetProperty(ref _fen, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    private string? _bestMove;
     public string? BestMove
     {
-        get => _bestMove;
-        set => SetProperty(ref _bestMove, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    private string? _ponder;
     public string? Ponder
     {
-        get => _ponder;
-        set => SetProperty(ref _ponder, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    private bool _isBusy;
     public bool IsBusy
     {
-        get => _isBusy;
-        set => SetProperty(ref _isBusy, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
-    public ObservableCollection<Option> Options { get; } = new ObservableCollection<Option>();
+    public ObservableCollection<Option> Options { get; } = [];
 
     public DelegateCommand GoCommand { get; }
     public DelegateCommand StopCommand { get; }
@@ -55,6 +48,7 @@ public class MainWindowViewModel : BindableBase
     public MainWindowViewModel(UciService uciService)
     {
         _uciService = uciService;
+        Fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
         GoCommand = new DelegateCommand(Go);
         StopCommand = new DelegateCommand(Stop);
