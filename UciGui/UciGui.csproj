@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="stockfish-windows-x86-64-avx2.exe" />
+    <None Remove="stockfish-windows-x86-64-universal.exe" />
     <None Remove="uci-gui-logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="stockfish-windows-x86-64-avx2.exe">
+    <Content Include="stockfish-windows-x86-64-universal.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

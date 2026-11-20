@@ -140,31 +140,35 @@
                                     </Border>
                         </DataTemplate>
                         <DataTemplate x:Key="stringTemplate">
-                            <DockPanel Margin="2">
-                                <TextBlock Text="{Binding Name, StringFormat={}{0}: }" VerticalAlignment="Center"/>
-                                <TextBox Text="{Binding Default}" DockPanel.Dock="Right">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="TextChanged">
-                                            <prism:InvokeCommandAction Command="{Binding DataContext.TextChangedCommand, RelativeSource={RelativeSource AncestorType=Window}}" TriggerParameterPath=""/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </TextBox>
-                            </DockPanel>
+                            <Border BorderBrush="#EEF1F4" BorderThickness="0,0,0,1" Padding="0,10">
+                                <DockPanel>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Width="150" TextWrapping="Wrap" Margin="0,0,12,0"/>
+                                    <TextBox Text="{Binding Default}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="TextChanged">
+                                                <prism:InvokeCommandAction Command="{Binding DataContext.TextChangedCommand, RelativeSource={RelativeSource AncestorType=Window}}" TriggerParameterPath=""/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBox>
+                                </DockPanel>
+                            </Border>
                         </DataTemplate>
                         <DataTemplate x:Key="buttonTemplate">
                             <Button Content="{Binding Name}" Command="{Binding DataContext.ButtonChangedCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Margin="2"/>
                         </DataTemplate>
                         <DataTemplate x:Key="comboTemplate">
-                            <DockPanel Margin="2">
-                                <TextBlock Text="{Binding Name, StringFormat={}{0}: }" VerticalAlignment="Center"/>
-                                <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding Default}" DockPanel.Dock="Right" Margin="2">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="SelectionChanged">
-                                            <prism:InvokeCommandAction Command="{Binding DataContext.SelectionChangedCommand, RelativeSource={RelativeSource AncestorType=Window}}" TriggerParameterPath=""/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </ComboBox>
-                            </DockPanel>
+                            <Border BorderBrush="#EEF1F4" BorderThickness="0,0,0,1" Padding="0,10">
+                                <DockPanel>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Width="150" TextWrapping="Wrap" Margin="0,0,12,0"/>
+                                    <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding Default}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="SelectionChanged">
+                                                <prism:InvokeCommandAction Command="{Binding DataContext.SelectionChangedCommand, RelativeSource={RelativeSource AncestorType=Window}}" TriggerParameterPath=""/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </ComboBox>
+                                </DockPanel>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.Resources>
                 </ItemsControl>

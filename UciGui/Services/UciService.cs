@@ -64,7 +64,7 @@ public class UciService
 
     private List<Option> GetOptions()
     {
-        return GetOptionLines().Select(f => GetDict("option", f)).Select(f => new Option
+        return [.. GetOptionLines().Select(f => GetDict("option", f)).Select(f => new Option
         {
             Name = f.TryGetValue("name", out dynamic v0) ? v0 : null,
             Type = f.TryGetValue("type", out dynamic v1) ? v1 : OptionTypes.None,
@@ -72,7 +72,7 @@ public class UciService
             Minimum = f.TryGetValue("min", out dynamic v3) ? v3 : 0,
             Maximum = f.TryGetValue("max", out dynamic v4) ? v4 : 0,
             Items = f.TryGetValue("var", out dynamic v5) ? v5.ToArray() : null,
-        }).ToList();
+        })];
     }
 
     public void SetOption(Option option, string? newValue)
@@ -89,7 +89,7 @@ public class UciService
             line = line[(line.IndexOf(type) + type.Length + 1)..];
         }
 
-        string[] words = line.Split(' ').Select(f => f.Trim()).ToArray();
+        string[] words = [.. line.Split(' ').Select(f => f.Trim())];
 
         string? key = null;
         List<string> values = [];
@@ -129,18 +129,17 @@ public class UciService
         }
         else if (key == "type")
         {
-            dict.Add(key, Enum.Parse(typeof(OptionTypes), char.ToUpper(value[0]) + value[1..]));
+            dict.Add(key, Enum.Parse<OptionTypes>(char.ToUpper(value[0]) + value[1..]));
         }
         else if (key == "var")
         {
-#pragma warning disable IDE0008
-            if (dict.TryGetValue("var", out var v0))
+            if (dict.TryGetValue("var", out dynamic? v0))
             {
                 v0.Add(value);
             }
             else
             {
-                dict.Add(key, new List<string>(new string[] { value }));
+                dict.Add(key, new List<string>([value]));
             }
         }
         else
@@ -178,8 +177,8 @@ public class UciService
             if (line != null && line.StartsWith("bestmove"))
             {
                 Dictionary<string, dynamic> dict = GetDict(null, line);
-                string? bestMove = dict.TryGetValue("bestmove", out var v0) ? v0 : null;
-                string? ponder = dict.TryGetValue("ponder", out var v1) ? v1 : null;
+                string? bestMove = dict.TryGetValue("bestmove", out dynamic? v0) ? v0 : null;
+                string? ponder = dict.TryGetValue("ponder", out dynamic? v1) ? v1 : null;
                 return (bestMove, ponder);
             }
         }

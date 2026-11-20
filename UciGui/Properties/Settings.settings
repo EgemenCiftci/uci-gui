@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="UciEngineExe" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">stockfish-windows-x86-64-avx2.exe</Value>
+      <Value Profile="(Default)">stockfish-windows-x86-64-universal.exe</Value>
     </Setting>
   </Settings>
 </SettingsFile>
